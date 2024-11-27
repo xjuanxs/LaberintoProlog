@@ -1,0 +1,28 @@
+% Representación del laberinto
+camino(1, 1). camino(1, 2). camino(1, 3). camino(1, 4).
+camino(2, 1). camino(3, 1). camino(3, 2). camino(3, 3). camino(3, 4).
+camino(4, 1). camino(4, 2). camino(4, 3). camino(4, 4).
+
+% Puntos inicial y final
+inicio(1, 1).
+fin(4, 4).
+
+% Movimiento permitido: arriba, abajo, izquierda, derecha
+mover(X, Y, NX, Y) :- NX is X - 1, camino(NX, Y). % arriba
+mover(X, Y, NX, Y) :- NX is X + 1, camino(NX, Y). % abajo
+mover(X, Y, X, NY) :- NY is Y - 1, camino(X, NY). % izquierda
+mover(X, Y, X, NY) :- NY is Y + 1, camino(X, NY). % derecha
+
+% Búsqueda de solución
+solucionable :-
+    inicio(X, Y),
+    fin(FX, FY),
+    dfs(X, Y, FX, FY, []).
+
+% Búsqueda en profundidad (DFS)
+dfs(X, Y, FX, FY, Visitados) :-
+    X = FX, Y = FY. % Caso base: llegamos al final
+dfs(X, Y, FX, FY, Visitados) :-
+    mover(X, Y, NX, NY),
+    \+ member((NX, NY), Visitados), % Evitar ciclos
+    dfs(NX, NY, FX, FY, [(NX, NY) | Visitados]).
